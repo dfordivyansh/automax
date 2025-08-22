@@ -1,0 +1,404 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      {% block 'title' %}Automax • List Your Car Today!{% endblock %}
+    </title>
+
+    <link rel="icon" type="image/png" href="{% static 'images/logoauto.png' %}">
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet" />
+
+    <style>
+      html, body {
+        height: 100%;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Chatbot */
+      #chatbot-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+      }
+
+      #chatbot-toggle {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      #chatbot-toggle img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+      }
+
+      #chatbot-popup {
+        display: none;
+        flex-direction: column;
+        width: 340px;
+        height: 480px;
+        background-color: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        margin-bottom: 10px;
+      }
+
+      #chatbot-header {
+        background: linear-gradient(135deg, #3fbafe, #3a8dfd);
+        color: white;
+        padding: 12px 16px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #chatbot-header button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      #chatbot-messages {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: #f9f9f9;
+      }
+
+      .chat-bubble {
+        max-width: 75%;
+        padding: 10px 14px;
+        border-radius: 18px;
+        line-height: 1.4;
+        word-wrap: break-word;
+      }
+
+      .user-msg {
+        align-self: flex-end;
+        background-color: #3a8dfd;
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+
+      .bot-msg {
+        align-self: flex-start;
+        background-color: #e1eaf4;
+        color: #111;
+        border-bottom-left-radius: 4px;
+        position: relative;
+      }
+
+      .bot-loading::after {
+        content: "...";
+        animation: blink 1s infinite steps(1);
+        font-weight: bold;
+        margin-left: 6px;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.2;
+        }
+      }
+
+      #chatbot-input-area {
+        display: flex;
+        border-top: 1px solid #ddd;
+      }
+
+      #chatbot-input {
+        flex: 1;
+        border: none;
+        padding: 12px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      #chatbot-input-area button {
+        padding: 0 16px;
+        background-color: #3a8dfd;
+        color: white;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      /* Floating animation for chatbot icon */
+      #chatbot-toggle img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        animation: floatBot 2.5s ease-in-out infinite;
+      }
+
+      /* Define keyframes */
+      @keyframes floatBot {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px); /* Move up */
+        }
+        100% {
+          transform: translateY(0); /* Back down */
+        }
+      }
+      #chatbot-toggle img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        animation: bounceBot 1.2s infinite;
+      }
+
+      @keyframes bounceBot {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+      .footer {
+        margin-top: auto; /* Push footer to bottom */
+      }
+      .footer-link {
+        color: #ccc;
+        text-decoration: none;
+      }
+
+      .footer-link:hover {
+        color: #ffffff;
+        text-decoration: underline;
+      }
+
+      .footer-social {
+        font-size: 1.3rem;
+        color: #ccc;
+        transition: color 0.3s ease;
+      }
+
+      .footer-social:hover {
+        color: #0d6efd;
+      }
+
+      
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+
+  <body>
+    {% if messages %} {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% block 'header' %}
+<header class="bg-dark text-white py-3">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+    <!-- Left: Logo + Name -->
+    <a
+      href="{% url 'home' %}"
+      class="d-flex align-items-center text-white text-decoration-none">
+      <img
+        src="{% static 'images/logoauto.png' %}"
+        width="46"
+        height="46"
+        class="me-2"
+        alt="AutoMax Logo" />
+      <strong>AutoMax</strong>
+    </a>
+
+    <!-- Right: Auth Links -->
+    {% if request.user.is_authenticated %}
+    <div class="d-flex align-items-center gap-3">
+      <a href="{% url 'profile' %}" class="nav-link text-white px-2">Profile</a>
+      <a
+        href="{% url 'logout' %}"
+        class="btn btn-outline-light btn-sm rounded-pill px-3"
+        >Logout</a>
+    </div>
+    {% endif %}
+  </div>
+</header>
+
+    {% endblock %} {% block 'body' %}{% endblock %}
+
+    <!-- Chatbot -->
+    <div id="chatbot-container">
+      <button id="chatbot-toggle" onclick="toggleChatbot()">
+        <img src="{% static 'images/chatbot.png' %}" alt="Chatbot Icon" />
+      </button>
+      <div id="chatbot-popup">
+        <div id="chatbot-header">
+          <span>AutoBot</span>
+          <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input-area">
+          <input
+            type="text"
+            id="chatbot-input"
+            placeholder="Type your message..." />
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function toggleChatbot() {
+        const popup = document.getElementById("chatbot-popup");
+        popup.style.display = popup.style.display === "flex" ? "none" : "flex";
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("chatbot-input");
+        const message = input.value.trim();
+        if (message === "") return;
+
+        const messages = document.getElementById("chatbot-messages");
+
+        // Add user message
+        const userMsg = document.createElement("div");
+        userMsg.className = "chat-bubble user-msg";
+        userMsg.innerText = message;
+        messages.appendChild(userMsg);
+
+        // Add bot loading message
+        const botMsg = document.createElement("div");
+        botMsg.className = "chat-bubble bot-msg bot-loading";
+        botMsg.innerText = "AutoBot is typing";
+        messages.appendChild(botMsg);
+
+        messages.scrollTop = messages.scrollHeight;
+        input.value = "";
+
+        // Simulate delay before bot replies
+        setTimeout(() => {
+          fetch("/chatbot/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ message }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              botMsg.classList.remove("bot-loading");
+              botMsg.innerText = data.reply;
+              messages.scrollTop = messages.scrollHeight;
+            });
+        }, 2000); // 2 seconds delay
+      }
+
+      // Handle "Enter" key as send
+      document.addEventListener("DOMContentLoaded", () => {
+        const input = document.getElementById("chatbot-input");
+        input.addEventListener("keypress", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+          }
+        });
+      });
+
+      function getCSRFToken() {
+        const cookie = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("csrftoken="));
+        return cookie ? cookie.split("=")[1] : "";
+      }
+    </script>
+
+    {% block 'footer' %}
+    <footer class="footer text-white bg-dark pt-5 pb-4 mt-5">
+      <div class="container">
+        <div class="row">
+          <!-- Brand Section -->
+          <div class="col-md-4 mb-4">
+            <h5 class="fw-bold">🚗 AutoMax</h5>
+            <p>Best place to buy and sell verified cars online.</p>
+            <p class="small">© {% now 'Y' %} AutoMax. All rights reserved.</p>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="col-md-4 mb-4">
+            <h6 class="fw-bold">Quick Links</h6>
+            <ul class="list-unstyled">
+              <li>
+                <a href="{% url 'home' %}" class="footer-link">🏠 Home</a>
+              </li>
+              <li>
+                <a href="{% url 'list' %}" class="footer-link"
+                  >📤 List Your Car</a
+                >
+              </li>
+              <li>
+                <a href="{% url 'profile' %}" class="footer-link"
+                  >👤 My Profile</a
+                >
+              </li>
+              <li>
+                <a href="{% url 'main' %}" class="footer-link"
+                  >🔍 Browse Cars</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact & Social -->
+          <div class="col-md-4 mb-4">
+            <h6 class="fw-bold">Connect With Us</h6>
+            <p class="mb-2">📧 contact@automax.com</p>
+            <div class="d-flex gap-3">
+              <a href="#" class="footer-social"
+                ><i class="bi bi-facebook"></i
+              ></a>
+              <a href="#" class="footer-social"
+                ><i class="bi bi-instagram"></i
+              ></a>
+              <a href="#" class="footer-social"
+                ><i class="bi bi-twitter-x"></i
+              ></a>
+              <a href="#" class="footer-social"
+                ><i class="bi bi-youtube"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+        <hr class="text-muted" />
+        <p class="text-center small mb-0">
+        Copyright © {% now 'Y' %}
+        <a href="#" class="text-white">AutoMax</a> by
+        <a href="https://www.linkedin.com/in/divyanshsrivastava1" class="text-white">Divyansh Srivastava</a>
+
+        </p>
+      </div>
+    </footer>
+    {% endblock %}
+  </body>
+</html>

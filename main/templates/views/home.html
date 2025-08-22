@@ -1,0 +1,120 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block 'title' %}
+AutoMax · Home
+{% endblock %}
+
+{% block 'body' %}
+<main class="container py-5">
+
+  <!-- Hero Section -->
+  <section class="bg-light p-5 rounded-4 shadow-sm mb-5">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <h1 class="display-5 fw-bold text-danger">AutoMax</h1>
+        <p class="lead text-muted">
+          The best place to buy or sell modern enthusiast cars — now easier than ever.
+        </p>
+        <a href="{% url 'list' %}" 
+           class="btn btn-dark btn-sm px-4 py-2 rounded-pill fw-semibold transition-transform" 
+           style="transition: transform 0.3s ease-in-out;"
+           onmouseover="this.style.transform='scale(1.05)'" 
+           onmouseout="this.style.transform='scale(1)'">
+          List Your Car
+        </a>
+      </div>
+      <div class="col-lg-6">
+        <div class="bg-white border rounded-4 p-4 shadow-sm">
+          <form method="get" class="position-relative">
+            <!-- Regular Django filter form -->
+            {{ listing_filter.form|crispy }}
+
+
+            <!-- Submit Button -->
+            <div class="d-grid mt-3">
+              <button class="btn btn-outline-danger rounded-pill fw-semibold" type="submit">
+                Filter Listings
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Listings Section -->
+  <section class="bg-white p-4 rounded-4 shadow-sm">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      {% for listing in listing_filter.qs %}
+      <div class="col">
+        {% include "components/listing_card.html" %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</main>
+
+<!-- JavaScript for Smart AI Suggestions -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('smart-search');
+    const suggestionsBox = document.getElementById('ai-suggestions');
+    let debounce;
+
+    input.addEventListener('input', () => {
+        clearTimeout(debounce);
+        const query = input.value;
+        if (query.length < 2) {
+            suggestionsBox.classList.add('d-none');
+            return;
+        }
+
+        debounce = setTimeout(() => {
+            fetch(`/autocomplete/?query=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    suggestionsBox.innerHTML = '';
+                    if (!data.suggestions || !data.suggestions.length) {
+                        suggestionsBox.classList.add('d-none');
+                        return;
+                    }
+
+                    data.suggestions.forEach(suggestion => {
+                        const item = document.createElement('div');
+                        item.className = 'list-group-item list-group-item-action';
+                        item.textContent = suggestion;
+                        item.onclick = () => {
+                            input.value = suggestion;
+                            suggestionsBox.classList.add('d-none');
+                        };
+                        suggestionsBox.appendChild(item);
+                    });
+
+                    suggestionsBox.classList.remove('d-none');
+                });
+        }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!suggestionsBox.contains(e.target) && e.target !== input) {
+            suggestionsBox.classList.add('d-none');
+        }
+    });
+});
+</script>
+
+<!-- Optional CSS if needed -->
+<style>
+#ai-suggestions {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-top: none;
+  z-index: 999;
+}
+</style>
+
+{% endblock %}

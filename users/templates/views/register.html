@@ -1,0 +1,77 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block 'body' %}
+<style>
+  /* Card container */
+  .register-card {
+    max-width: 460px;
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    margin: auto;
+  }
+
+  .register-card img {
+    border-radius: 50%;
+  }
+
+  .btn-danger {
+    border-radius: 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+    padding: 0.6rem 2rem;
+  }
+
+  .btn-danger:hover {
+    background-color: #bd2130;
+    transform: translateY(-2px);
+  }
+
+  .text-muted {
+    font-size: 0.875rem;
+  }
+
+  /* Prevent unwanted horizontal scrolling */
+  html, body {
+    overflow-x: hidden;
+  }
+
+  /* Adjustments for mobile */
+  @media (max-width: 576px) {
+    .register-card {
+      padding: 1.2rem;
+    }
+    .btn-danger {
+      width: 100%; /* full width button */
+      padding: 0.7rem;
+    }
+    .register-card img {
+      width: 60px;
+      height: 60px;
+    }
+  }
+</style>
+
+<div class="container py-5">
+  <div class="text-center mb-4">
+    <h2 class="fw-bold text-dark border-bottom border-danger d-inline-block pb-2">
+      Register
+    </h2>
+  </div>
+
+  <div class="register-card text-center">
+    <form action="" method="post">
+      <img class="mb-4" src="{% static 'images/logoauto.png' %}" alt="Logo" width="72" height="72">
+      {% csrf_token %}
+      {{ register_form|crispy }}
+      <button class="btn btn-danger mt-3" type="submit">Register</button>
+      <p class="mt-4 mb-0 text-muted">&copy; 2025 AutoMax</p>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}{% endblock %}

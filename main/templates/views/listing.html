@@ -1,0 +1,91 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block 'title' %}
+<title>AutoMax · {{ listing.model }} Listing</title>
+{% endblock %}
+
+{% block 'body' %}
+<main>
+  <!-- Top Section -->
+  <section class="container col-xxl-10 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <img src="{{ listing.image.url }}" class="img-fluid rounded shadow w-100" alt="{{ listing.model }}" loading="lazy">
+      </div>
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold text-danger">{{ listing.model }}</h1>
+        <p class="lead text-muted">{{ listing.seller.user.username }} &middot; {{ listing.updated_at|date:"M d, Y" }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Auto Info Section -->
+  <div class="bg-light py-5 rounded-4">
+    <div class="container px-4">
+      <h2 class="h4 fw-bold border-bottom border-3 border-danger pb-2 mb-4">Auto Information</h2>
+      <div class="row g-4">
+        <!-- Info Table -->
+        <div class="col-lg-8">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle text-start w-auto mx-auto">
+              <tbody>
+                <tr><th class="bg-light">Brand</th><td>{{ listing.brand|capfirst }}</td></tr>
+                <tr><th class="bg-light">VIN</th><td>{{ listing.vin }}</td></tr>
+                <tr><th class="bg-light">Mileage</th><td>{{ listing.mileage }} km</td></tr>
+                <tr><th class="bg-light">Color</th><td>{{ listing.color }}</td></tr>
+                <tr><th class="bg-light">Engine</th><td>{{ listing.engine }}</td></tr>
+                <tr><th class="bg-light">Transmission</th><td>{{ listing.transmisson|capfirst }}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Location Card -->
+        <div class="col-lg-4">
+          <div class="card shadow rounded-4 h-100">
+            <div class="card-header text-center rounded-top-4">
+              <h5 class="mb-2 mt-2">Location</h5>
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center text-center">
+              <p class="mb-3">{{ listing.location.city }}, {{ listing.location.state }}, {{ listing.location.zip_code }}</p>
+              <button class="btn btn-outline-primary w-100 mb-2 rounded-pill">{{ listing.seller.phone_number }}</button>
+              <button id="sendEmail" class="btn btn-outline-primary w-100 rounded-pill">Send Email</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="pt-5">
+        <h2 class="h4 fw-bold border-bottom border-3 border-danger pb-2 mb-3">Description</h2>
+        <p class="text-secondary fs-4 lh-base">{{ listing.description }}</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.getElementById("sendEmail").addEventListener("click", function () {
+    fetch("{% url 'inquire_listing' id=listing.id %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        alert("Email sent successfully!");
+      } else {
+        return response.json().then(data => {
+          throw new Error(data.message || "Something went wrong.");
+        });
+      }
+    })
+    .catch(error => {
+      alert("Error: " + error.message);
+    });
+  });
+</script>
+{% endblock %}

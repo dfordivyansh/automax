@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block 'body' %}
+<style>
+  .form-signin {
+    max-width: 420px;
+    padding: 2rem;
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.96);
+    border-radius: 1rem;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .form-signin img {
+    border-radius: 50%;
+  }
+
+  .btn-danger {
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 2rem;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .btn-danger:hover {
+    background-color: #bd2130;
+    transform: translateY(-2px);
+  }
+
+  .text-muted {
+    font-size: 0.875rem;
+  }
+</style>
+
+<div class="text-center">
+  <main class="form-signin mt-5">
+    <form action="" method="post">
+      <img class="mb-4" src="{% static '/images/logoauto.png' %}" alt="Logo" width="72" height="72">
+      {% csrf_token %}
+      {{ login_form|crispy }}
+      <button class="w-100 btn btn-danger mt-3" type="submit">Sign In</button>
+      <p class="mt-4 mb-0 text-muted">&copy; 2025 AutoMax</p>
+    </form>
+  </main>
+</div>
+{% endblock %}
+
+{% block 'footer' %}
+{% endblock %}

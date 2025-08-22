@@ -1,0 +1,101 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block 'body' %}
+<style>
+  .section-title {
+    color: #212529;
+    border-bottom: 3px solid #dc3545;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .listing-card {
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+  }
+
+  .btn-danger {
+    border-radius: 2rem;
+    font-weight: 600;
+    padding: 0.5rem 2rem;
+  }
+
+  .btn-danger:hover {
+    background-color: #bd2130;
+  }
+
+  /* Prevent unwanted horizontal scrolling */
+  html, body {
+    overflow-x: hidden;
+  }
+
+  /* Ensure no element exceeds viewport width */
+  .container, .listing-card {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Make section titles centered on small screens */
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 1.4rem;
+      text-align: center;
+      border-bottom: none;
+    }
+  }
+
+  /* Listing card padding for mobile */
+  @media (max-width: 576px) {
+    .listing-card {
+      padding: 1.2rem;
+    }
+    .btn-danger {
+      width: 100%; /* Full width button on mobile */
+      padding: 0.7rem;
+    }
+  }
+
+  /* Form fields spacing on small screens */
+  @media (max-width: 768px) {
+    .row.g-4 > [class*="col-"] {
+      flex: 0 0 100%; /* Stack forms vertically */
+      max-width: 100%;
+    }
+  }
+</style>
+
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h2 class="section-title">Create New Listing</h2>
+  </div>
+
+  <div class="listing-card mb-5">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row g-4">
+        <!-- Vehicle Details -->
+        <div class="col-md-6">
+          <h5 class="mb-3 text-danger fw-semibold">Vehicle Details</h5>
+          {{ listing_form|crispy }}
+        </div>
+
+        <!-- Location Info -->
+        <div class="col-md-6">
+          <h5 class="mb-3 text-danger fw-semibold">Location Info</h5>
+          {{ location_form|crispy }}
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-danger">Save Listing</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

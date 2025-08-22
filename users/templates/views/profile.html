@@ -1,0 +1,156 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block 'body' %}
+<style>
+  .section-title {
+    color: #212529;
+    border-bottom: 3px solid #dc3545;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .profile-card {
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+  }
+
+  .btn-danger {
+    border-radius: 2rem;
+    font-weight: 600;
+    padding: 0.5rem 2rem;
+  }
+
+  .btn-danger:hover {
+    background-color: #bd2130;
+  }
+/* Prevent unwanted horizontal scrolling */
+
+
+/* Fix table overflow on small devices */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+}
+
+/* Ensure no element exceeds viewport width */
+.container, .profile-card {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+
+  /* Make section titles centered on small screens */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.4rem;
+    text-align: center;
+    border-bottom: none;
+  }
+}
+
+/* Profile card padding for mobile */
+@media (max-width: 576px) {
+  .profile-card {
+    padding: 1.2rem;
+  }
+  .btn-danger {
+    width: 100%; /* Full width button on mobile */
+    padding: 0.7rem;
+  }
+}
+
+/* Form fields spacing */
+@media (max-width: 768px) {
+  .row.g-4 > [class*="col-"] {
+    flex: 0 0 100%; /* Stack forms vertically */
+    max-width: 100%;
+  }
+}
+
+/* Table adjustments */
+@media (max-width: 576px) {
+  table.table {
+    font-size: 0.85rem; /* Smaller text */
+  }
+  table.table th,
+  table.table td {
+    padding: 0.4rem;
+  }
+}
+
+</style>
+
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h2 class="section-title">Profile</h2>
+  </div>
+
+  <div class="profile-card mb-5">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row g-4">
+        <div class="col-md-6">
+          {{ user_form|crispy }}
+          {{ profile_form|crispy }}
+        </div>
+        <div class="col-md-6">
+          {{ location_form|crispy }}
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <button class="btn btn-danger" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="mb-5">
+    <h2 class="section-title">Your Listings</h2>
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Model</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for listing in user_listings %}
+          <tr>
+            <td>{{ listing.id }}</td>
+            <td>{{ listing.model }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <h2 class="section-title">Liked Listings</h2>
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Model</th>
+            <th>Liked On</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for liked_listing in user_liked_listings %}
+          <tr>
+            <td>{{ liked_listing.listing.model }}</td>
+            <td>{{ liked_listing.like_date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

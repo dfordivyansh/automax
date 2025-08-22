@@ -1,0 +1,140 @@
+{% extends 'base/base.html' %} 
+{% load static %}
+{% block 'header' %}{% endblock %}
+
+
+{% block 'body' %}
+
+<style>
+  @keyframes fadeSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Video in its original size */
+  #myVideo {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    object-fit: contain;   /* 👈 show video in original size without zoom */
+    width: auto;
+    height: auto;
+    background: black; /* if video smaller than screen, black borders will show */
+    z-index: -1;
+  }
+
+  .main-content {
+    z-index: 1;
+  }
+
+  .animated-btn {
+  animation: fadeSlideUp 1s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  border-radius: 2rem;
+  font-weight: 600;
+  font-size: 1.1rem;   /* 👈 bigger font for desktop */
+  padding: 0.8rem 2rem; /* 👈 more padding */
+}
+
+.animated-btn:hover {
+  transform: translateY(-2px);
+  background-color: #e2e6ea !important;
+  color: #000 !important;
+}
+
+  /* Responsive adjustments for text & layout */
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    p.lead {
+      font-size: 1rem;
+    }
+
+    .animated-btn {
+      font-size: 0.85rem;
+      padding: 0.5rem 1.5rem;
+    }
+
+    header h3 {
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    nav.nav {
+      justify-content: center !important;
+      float: none !important;
+      margin-top: 0.5rem;
+    }
+
+    .main-content {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    footer p {
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    p.lead {
+      font-size: 0.9rem;
+    }
+
+    .animated-btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="d-flex h-100 text-center text-white index">
+  <video autoplay muted loop id="myVideo">
+    <source src="{% static 'videos/bg.mp4' %}" type="video/mp4">
+  </video>
+
+  <div class="d-flex w-100 h-100 p-3 mx-auto flex-column main-content">
+    <header class="mb-auto">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <h3 class="mb-2 mb-md-0">AutoMax</h3>
+        <nav class="nav nav-masthead">
+          {% if request.user.is_authenticated %}
+            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+          {% else %}
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    <main class="px-3 my-auto">
+      <h2>Find a deal near you!</h2>
+      <p class="lead">Looking to buy or sell a used car? We've got you.<br>AutoMax is the leading used car marketplace.</p>
+      <p class="lead">
+        <a href="{% url 'register' %}" class="btn btn-light text-dark border-0 animated-btn">Register</a>
+      </p>
+    </main>
+
+    <footer class="mt-auto text-white-50">
+      <p>
+        Copyright © {% now 'Y' %}
+        <a href="#" class="text-white">AutoMax</a> </br> by
+        <a href="https://www.linkedin.com/in/divyanshsrivastava1" class="text-white">Divyansh Srivastava</a>
+      </p>
+    </footer>
+  </div>
+</div>
+
+{% endblock %}
+{% block 'footer' %}{% endblock %}
