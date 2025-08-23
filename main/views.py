@@ -1,4 +1,4 @@
-from importlib import reload
+import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect, render, get_object_or_404
@@ -113,22 +113,16 @@ def inquire_listing_using_email(request, id):
 # ----------------------
 @csrf_exempt
 def chatbot_reply(request):
-    """
-    Simple keyword-based chatbot without ML.
-    Looks for exact or partial matches in the ChatQA database.
-    """
     if request.method != "POST":
         return JsonResponse({"reply": "Invalid request method."})
 
     try:
-        data = json.loads(request.body)
+        data = json.loads(request.body.decode('utf-8'))
         user_msg = data.get("message", "").strip().lower()
         response = "Sorry, I couldn't understand that. Can you rephrase?"
 
-        # Fetch all QA pairs
         qa_pairs = ChatQA.objects.all()
 
-        # Simple keyword matching
         for qa in qa_pairs:
             question_keywords = qa.question.lower().split()
             if any(word in user_msg for word in question_keywords):
@@ -137,4 +131,6 @@ def chatbot_reply(request):
 
         return JsonResponse({"reply": response})
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return JsonResponse({"reply": "Error processing message.", "error": str(e)})

@@ -38,6 +38,11 @@ DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[".railway.app", "localhost", "127.0.0.1"])
 
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://automax-production.up.railway.app",
+    "http://localhost:8000",  # for local testing
+]
+
 # Application definition
 
 INSTALLED_APPS = [
