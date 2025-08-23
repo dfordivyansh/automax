@@ -31,8 +31,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 # =============================
 COPY . .
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
+
 
 # Make entrypoint executable
 RUN chmod +x /app/entrypoint.sh
