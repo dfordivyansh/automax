@@ -8,7 +8,6 @@ from .views import (
     like_listing_view,
     inquire_listing_using_email,
     chatbot_reply,
-    autocomplete_ai,
 )
 
 urlpatterns = [
@@ -20,5 +19,4 @@ urlpatterns = [
     path('listing/<str:id>/like/', like_listing_view, name='like_listing'),
     path('listing/<str:id>/inquire/', inquire_listing_using_email, name='inquire_listing'),
     path('chatbot/', chatbot_reply, name='chatbot_reply'), 
-    path('autocomplete/', autocomplete_ai, name='autocomplete_ai'),
 ]
