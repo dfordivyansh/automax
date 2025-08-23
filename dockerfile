@@ -21,11 +21,12 @@ COPY . .
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Apply migrations
-RUN python manage.py migrate --noinput
+# Run DB migrations at container start (not at build!)
+# (Remove your old migrate RUN command — it won't work well)
+# Instead, handle this with entrypoint or manually
 
-# Expose port (Railway will use $PORT)
+# Expose port (Railway provides $PORT)
 EXPOSE 8000
 
 # Start app with Gunicorn
-CMD ["gunicorn", "automax.wsgi:application", "--bind", "0.0.0.0:$PORT"]
+CMD ["sh", "-c", "gunicorn automax.wsgi:application --bind 0.0.0.0:$PORT"]
