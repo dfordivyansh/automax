@@ -18,14 +18,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
-
-# Apply migrations
-RUN python manage.py migrate --noinput
+# Make entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
 
 # Expose port (Railway will use $PORT)
 EXPOSE 8000
 
-# Start app with Gunicorn
-CMD ["gunicorn", "automax.wsgi:application", "--bind", "0.0.0.0:$PORT"]
+# Use entrypoint script
+ENTRYPOINT ["/app/entrypoint.sh"]
