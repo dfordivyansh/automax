@@ -18,16 +18,21 @@
   }
 
   /* Video in its original size */
-  #myVideo {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    object-fit: contain;   /* 👈 show video in original size without zoom */
-    width: auto;
-    height: auto;
-    background: black; /* if video smaller than screen, black borders will show */
-    z-index: -1;
-  }
+/* Video centered and responsive */
+#myVideo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* center video */
+  width: auto;
+  height: auto;
+  max-width: 100%;   /* scale down if screen smaller */
+  max-height: 100%;  /* scale down if screen smaller */
+  object-fit: cover; /* cover keeps center visible while scaling down */
+  z-index: -1;
+  background: black; /* black borders if video smaller than viewport */
+}
+
 
   .main-content {
     z-index: 1;
@@ -94,14 +99,14 @@
     }
 
     .animated-btn {
-      width: 100%;
+      width: 70%;
     }
   }
 </style>
 
 <div class="d-flex h-100 text-center text-white index">
   <video autoplay muted loop id="myVideo">
-    <source src="{% static 'videos/bg.mp4' %}" type="video/mp4">
+    <source src="{% static 'videos/bgcar.mp4' %}" type="video/mp4">
   </video>
 
   <div class="d-flex w-100 h-100 p-3 mx-auto flex-column main-content">

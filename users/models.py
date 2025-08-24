@@ -1,15 +1,27 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from localflavor.us.models import USStateField, USZipCodeField
-
+from localflavor.in_.models import INStateField
+from django.core.validators import RegexValidator
 from .utils import user_directory_path
+
+
+# Validator for Indian PIN code (6 digits)
+pincode_validator = RegexValidator(
+    regex=r'^\d{6}$',
+    message="Enter a valid 6-digit Indian PIN code."
+)
+
 class Location(models.Model):
     address_1 = models.CharField(max_length=128, blank=True)
     address_2 = models.CharField(max_length=128, blank=True)
     city = models.CharField(max_length=64)
-    state = USStateField(default="NY")
-    zip_code = USZipCodeField(blank=True)
+    state = INStateField(default="DL")  # Indian states
+    zip_code = models.CharField(
+        max_length=6,
+        blank=True,
+        validators=[pincode_validator]
+    )
 
     def __str__(self):
         return f'Location {self.id}'
